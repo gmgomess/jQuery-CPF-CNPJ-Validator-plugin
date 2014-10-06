@@ -28,3 +28,14 @@ Defina uma function em:
 Essa function será executada se o valor NÃO passar pela validação definida.
 Defina uma function em:
 <code>ifInvalid</code> podendo exibir um alert, definir o foco, o que quiser...
+
+</br>
+
+Exemplo:
+          <code>$('.validar').cpfcnpj({
+                validate: 'cpfcnpj',
+                event: 'click',
+                handler: '.btn',
+                ifValid: function (type) { alert(type); },
+                ifInvalid: function () { alert('inválido'); }
+            });</code>
