@@ -1,7 +1,7 @@
 jQuery-CPF-CNPJ-Validator-plugin
 ================================
 
-Um plugin jQuery para validar CPF ou CNPJ, ou quem sabe os dois :D
+Um plugin jQuery para validar CPF ou CNPJ, ou quem sabe os dois...
 
 <span>Indique o campo que deseja validar:</span>
 <code>$('.validar').cpfcnpj();</code>
