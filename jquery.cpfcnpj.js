@@ -1,7 +1,7 @@
 /*!
- * jQuery CPF/CNPJ Validator Plugin v1.0.0
+ * jQuery CPF/CNPJ Validator Plugin v1.1.0
  * Developed by: Guilherme Gomes (gmgomess@gmail.com)
- * Date: 2014-10-03
+ * Date: 2014-10-06
  */
 (function ($) {
     var type = null;
@@ -9,6 +9,7 @@
     $.fn.cpfcnpj = function (options) {
         // Default settings
         var settings = $.extend({
+            mask: true,
             validate: 'cpfcnpj',
             event: 'focusout',
             handler: $(this),
@@ -16,10 +17,38 @@
             ifInvalid: null
         }, options);
 
+        if (settings.mask) {
+            if (jQuery().mask == null) {
+                settings.mask = false;
+                console.log("jQuery mask not found.");
+            }
+            else {
+                if (settings.validate == 'cpf') {
+                    $(this).mask('000.000.000-00');
+                }
+                else if (settings.validate == 'cnpj') {
+                    $(this).mask('00.000.000/0000-00');
+                }
+                else {
+                    var ctrl = $(this);
+                    var opt = {
+                        onKeyPress: function (field) {
+                            var masks = ['000.000.000-009', '00.000.000/0000-00'];
+                            msk = (field.length > 14) ? masks[1] : masks[0];
+                            ctrl.mask(msk, this);
+                        }
+                    };
+
+                    $(this).mask('000.000.000-009', opt);
+                }
+            }
+
+        }
+
         return this.each(function () {
             var valid = null;
             var control = $(this);
-           
+
             $(document).on(settings.event, settings.handler,
                function () {
                    if (control.val().length == 14 || control.val().length == 18) {
@@ -44,18 +73,16 @@
                    else valid = false;
 
                    if ($.isFunction(settings.ifValid)) {
-                       if(valid != null && valid){
-                           if($.isFunction(settings.ifValid))
-                           {
+                       if (valid != null && valid) {
+                           if ($.isFunction(settings.ifValid)) {
                                type = settings.validate == 'cpfcnpj' ? type : settings.validate;
 
                                var callbacks = $.Callbacks();
-                               callbacks.add(settings.ifValid); 
+                               callbacks.add(settings.ifValid);
                                callbacks.fire(type);
                            }
                        }
-                       else if($.isFunction(settings.ifInvalid))
-                       {
+                       else if ($.isFunction(settings.ifInvalid)) {
                            settings.ifInvalid.call(this);
                        }
                    }
@@ -66,11 +93,11 @@
     function validate_cnpj(val) {
 
         if (val.match(/^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/) != null) {
-           var val1 = val.substring(0, 2);
-           var val2 = val.substring(3, 6);
-           var val3 = val.substring(7, 10);
-           var val4 = val.substring(11, 15);
-           var val5 = val.substring(16, 18);
+            var val1 = val.substring(0, 2);
+            var val2 = val.substring(3, 6);
+            var val3 = val.substring(7, 10);
+            var val4 = val.substring(11, 15);
+            var val5 = val.substring(16, 18);
 
             var i;
             var number;
