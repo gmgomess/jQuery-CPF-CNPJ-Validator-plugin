@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Teste Validacao</title>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="jquery.cpfcnpj.js"></script>
+</head>
+<body>
+    <input type="text" class="validar" />
+    <input type="button" class="btn" value="Teste" />
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.validar').cpfcnpj({
+                mask: false,
+                validate: 'cpfcnpj',
+                event: 'click',
+                handler: '.btn',
+                ifValid: function (type) { alert(type); },
+                ifInvalid: function () { alert('invalid'); }
+            });
+        });
+    </script>
+</body>
+</html>

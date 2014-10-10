@@ -9,7 +9,7 @@
     $.fn.cpfcnpj = function (options) {
         // Default settings
         var settings = $.extend({
-            mask: true,
+            mask: false,
             validate: 'cpfcnpj',
             event: 'focusout',
             handler: $(this),
