@@ -21,10 +21,10 @@ Use <code>handler</code> podendo ser qualquer valor de um seletor jQuery, exempl
 <h6>O que fazer se o valor for VÁLIDO?</h6>
 Essa function será executada se o valor passar pela validação definida.
 Defina uma function em:
-<code>ifValid</code>. Caso esteja usando <code>validate: 'cpfcnpj'</code> pode ser recuperado o tipo do valor inserido pelo usuário apenas adicionando um parâmetro, exemplo: <code>function (tipo)</code>. Será retornada uma string <b>'cpf'</b> ou <b>'cnpj'</b>
+<code>ifValid</code>. Passe um parâmetro para que seja recuperado o controle validado.
 <br/><br/>
 <h6>O que fazer se o valor for INVÁLIDO?</h6>
-Essa function será executada se o valor NÃO passar pela validação definida.
+Essa function será executada se o valor NÃO passar pela validação definida. Passe um parâmetro para que seja recuperado o controle validado.
 Defina uma function em:
 <code>ifInvalid</code> podendo exibir um alert, definir o foco, o que quiser...
 <br/>
@@ -36,8 +36,8 @@ $(document).ready(function () {
 		validate: 'cpfcnpj',
 		event: 'click',
 		handler: '.btn',
-		ifValid: function (type) { alert(type); },
-		ifInvalid: function () { alert('invalid'); }
+		ifValid: function  (input) { input.removeClass("error"); },
+		ifInvalid: (input) { input.addClass("error"); }
 	});
 });
 ```
