@@ -75,15 +75,13 @@
                    if ($.isFunction(settings.ifValid)) {
                        if (valid != null && valid) {
                            if ($.isFunction(settings.ifValid)) {
-                               type = settings.validate == 'cpfcnpj' ? type : settings.validate;
-
                                var callbacks = $.Callbacks();
                                callbacks.add(settings.ifValid);
-                               callbacks.fire(type);
+                               callbacks.fire(control);
                            }
                        }
                        else if ($.isFunction(settings.ifInvalid)) {
-                           settings.ifInvalid.call(this);
+                           settings.ifInvalid(control);
                        }
                    }
                });
