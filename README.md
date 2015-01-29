@@ -3,6 +3,10 @@ jQuery-CPF-CNPJ-Validator-plugin
 
 Um plugin jQuery para validar CPF ou CNPJ, ou quem sabe os dois...
 
+[![status](https://sourcegraph.com/api/repos/github.com/gmgomess/jQuery-CPF-CNPJ-Validator-plugin/.badges/status.png)](https://sourcegraph.com/github.com/gmgomess/jQuery-CPF-CNPJ-Validator-plugin)
+[![library users](https://sourcegraph.com/api/repos/github.com/gmgomess/jQuery-CPF-CNPJ-Validator-plugin/.badges/library-users.png)](https://sourcegraph.com/github.com/gmgomess/jQuery-CPF-CNPJ-Validator-plugin)
+[![views](https://sourcegraph.com/api/repos/github.com/gmgomess/jQuery-CPF-CNPJ-Validator-plugin/.counters/views.png)](https://sourcegraph.com/github.com/gmgomess/jQuery-CPF-CNPJ-Validator-plugin)
+
 <span>Indique o campo que deseja validar:</span>
 <code>$('.validar').cpfcnpj();</code>
 <br/><br/>
