@@ -35,7 +35,7 @@
                         onKeyPress: function (field) {
                             var masks = ['000.000.000-009', '00.000.000/0000-00'];
                             msk = (field.length > 14) ? masks[1] : masks[0];
-                            ctrl.mask(msk, this);
+                            ctrl.mask(msk, opt);
                         }
                     };
 
