@@ -49,7 +49,7 @@
             var valid = null;
             var control = $(this);
 
-            $(document).on(settings.event, settings.handler,
+            $(this).on(settings.event, settings.handler,
                function () {
                    if (control.val().length == 14 || control.val().length == 18) {
                        if (settings.validate == 'cpf') {
