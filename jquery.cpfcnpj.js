@@ -9,6 +9,7 @@
     $.fn.cpfcnpj = function (options) {
         // Default settings
         var settings = $.extend({
+            runOnPageReady: false,
             mask: false,
             validate: 'cpfcnpj',
             event: 'focusout',
@@ -31,15 +32,19 @@
                 }
                 else {
                     var ctrl = $(this);
-                    var opt = {
-                        onKeyPress: function (field) {
-                            var masks = ['000.000.000-009', '00.000.000/0000-00'];
-                            msk = (field.length > 14) ? masks[1] : masks[0];
-                            ctrl.mask(msk, this);
-                        }
+                    var f = function (field) {
+                        var masks = ['000.000.000-009999', '00.000.000/0000-00'];
+                        msk = (field.length > 14) ? masks[1] : masks[0];
+                        ctrl.mask(msk, opt);
                     };
 
-                    $(this).mask('000.000.000-009', opt);
+                    var opt = {
+                        onKeyPress: f,
+                        onComplete: f,
+                        onChange: f,
+                    };
+
+                    $(this).mask($(this).val().length > 14 ? '00.000.000/0000-00' : '000.000.000-009999', opt);
                 }
             }
 
@@ -48,43 +53,48 @@
         return this.each(function () {
             var valid = null;
             var control = $(this);
+            var callback =  function () {
+               if (control.val().length == 14 || control.val().length == 18) {
+                   if (settings.validate == 'cpf') {
+                       valid = validate_cpf(control.val());
+                   }
+                   else if (settings.validate == 'cnpj') {
+                       valid = validate_cnpj(control.val())
+                   }
+                   else if (settings.validate == 'cpfcnpj') {
+                       if (validate_cpf(control.val())) {
+                           valid = true;
+                           type = 'cpf';
+                       }
+                       else if (validate_cnpj(control.val())) {
+                           valid = true;
+                           type = 'cnpj';
+                       }
+                       else valid = false;
+                   }
+               }
+               else if (0 === control.val().length && settings.allowEmpty) {
+                   valid = true;
+               }
+               else valid = false;
 
-            $(document).on(settings.event, settings.handler,
-               function () {
-                   if (control.val().length == 14 || control.val().length == 18) {
-                       if (settings.validate == 'cpf') {
-                           valid = validate_cpf(control.val());
-                       }
-                       else if (settings.validate == 'cnpj') {
-                           valid = validate_cnpj(control.val())
-                       }
-                       else if (settings.validate == 'cpfcnpj') {
-                           if (validate_cpf(control.val())) {
-                               valid = true;
-                               type = 'cpf';
-                           }
-                           else if (validate_cnpj(control.val())) {
-                               valid = true;
-                               type = 'cnpj';
-                           }
-                           else valid = false;
+               if ($.isFunction(settings.ifValid)) {
+                   if (valid != null && valid) {
+                       if ($.isFunction(settings.ifValid)) {
+                           var callbacks = $.Callbacks();
+                           callbacks.add(settings.ifValid);
+                           callbacks.fire(control);
                        }
                    }
-                   else valid = false;
-
-                   if ($.isFunction(settings.ifValid)) {
-                       if (valid != null && valid) {
-                           if ($.isFunction(settings.ifValid)) {
-                               var callbacks = $.Callbacks();
-                               callbacks.add(settings.ifValid);
-                               callbacks.fire(control);
-                           }
-                       }
-                       else if ($.isFunction(settings.ifInvalid)) {
-                           settings.ifInvalid(control);
-                       }
+                   else if ($.isFunction(settings.ifInvalid)) {
+                       settings.ifInvalid(control);
                    }
-               });
+                }
+            };
+            $(document).on(settings.event, settings.handler, callback);
+            if (settings.runOnPageReady) {
+                callback();
+            }
         });
     }
 
