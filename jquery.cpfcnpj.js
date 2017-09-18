@@ -115,11 +115,6 @@
     function validate_cnpj(val) {
 
         if (val.match(/^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/) != null) {
-            var val1 = val.substring(0, 2);
-            var val2 = val.substring(3, 6);
-            var val3 = val.substring(7, 10);
-            var val4 = val.substring(11, 15);
-            var val5 = val.substring(16, 18);
             return verify_cnpj_is_valid(
                 // val1
                 val.substring( 0,  2),
@@ -157,12 +152,6 @@
     function validate_cnpj_without_accents(val) {
 
         if (val.match(/^\d{14}$/) != null) {
-            var val1 = val.substring(0, 2);
-            var val2 = val.substring(2, 5);
-            var val3 = val.substring(5, 8);
-            var val4 = val.substring(8, 12);
-            var val5 = val.substring(12, 14);
-
             return verify_cnpj_is_valid(
                 // val1
                 val.substring( 0,  2),
@@ -204,6 +193,11 @@
 
         number = (val1 + val2 + val3 + val4);
 
+        // Check if all characters is equal
+        if ((/^([0-9])\1+$/).test(number)) {
+            return false;
+        }
+
         s = number;
         c = s.substr(0, 9);
         var dv = s.substr(9, 2);
@@ -242,6 +236,11 @@
         var result = true;
 
         number = (val1 + val2 + val3 + val4 + val5);
+
+        // Check if all characters is equal
+        if ((/^([0-9])\1+$/).test(number)) {
+            return false;
+        }
 
         s = number;
 
