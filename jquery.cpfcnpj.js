@@ -53,7 +53,6 @@
                 function () {
                     if(settings.mask == false) {
                         if (control.val().length == 11 || control.val().length == 14) {
-                            console.error('control_val', control.val());
                             if (settings.validate == 'cpf') {
                                 valid = validate_cpf_without_accents(control.val());
                             }
@@ -121,7 +120,6 @@
             var val3 = val.substring(7, 10);
             var val4 = val.substring(11, 15);
             var val5 = val.substring(16, 18);
-            console.error('val1',val1,'val2',val2,'val3',val3,'val4',val4,'val5',val5,);
             return verify_cnpj_is_valid(
                 // val1
                 val.substring( 0,  2),
@@ -164,7 +162,6 @@
             var val3 = val.substring(5, 8);
             var val4 = val.substring(8, 12);
             var val5 = val.substring(12, 14);
-            console.error('val1',val1,'val2',val2,'val3',val3,'val4',val4,'val5',val5,);
 
             return verify_cnpj_is_valid(
                 // val1
