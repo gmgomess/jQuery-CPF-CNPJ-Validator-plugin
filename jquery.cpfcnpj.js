@@ -1,5 +1,5 @@
 /*!
- * jQuery CPF/CNPJ Validator Plugin v1.1.1
+ * jQuery CPF/CNPJ Validator Plugin v1.1.2
  * Developed by: Guilherme Gomes (gmgomess@gmail.com)
  * Date: 2018-06-04
  */
@@ -138,49 +138,39 @@
     }
 
     function validate_cpf(val) {
-
         if (val.match(/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/) != null) {
-            var val1 = val.substring(0, 3);
-            var val2 = val.substring(4, 7);
-            var val3 = val.substring(8, 11);
-            var val4 = val.substring(12, 14);
+            //check all same numbers
+            if (val.match(/\b(.+).*(\1.*){10,}\b/g) != null)
+                return false;
 
-            var i;
-            var number;
-            var result = true;
-
-            number = (val1 + val2 + val3 + val4);
-
-            s = number;
-            c = s.substr(0, 9);
-            var dv = s.substr(9, 2);
-            var d1 = 0;
-
-            for (i = 0; i < 9; i++) {
-                d1 += c.charAt(i) * (10 - i);
-            }
-
-            if (d1 == 0)
-                result = false;
-
-            d1 = 11 - (d1 % 11);
-            if (d1 > 9) d1 = 0;
-
-            if (dv.charAt(0) != d1)
-                result = false;
-
-            d1 *= 2;
-            for (i = 0; i < 9; i++) {
-                d1 += c.charAt(i) * (11 - i);
-            }
-
-            d1 = 11 - (d1 % 11);
-            if (d1 > 9) d1 = 0;
-
-            if (dv.charAt(1) != d1)
-                result = false;
-
-            return result;
+            var strCPF = val.replace(/\D/g,'');
+            var sum;
+            var rest;
+            sum = 0;
+            
+            for (i=1; i<=9; i++) 
+                sum = sum + parseInt(strCPF.substring(i-1, i)) * (11 - i);
+            
+            rest = (sum * 10) % 11;
+            
+            if ((rest == 10) || (rest == 11))
+                rest = 0;
+            
+            if (rest != parseInt(strCPF.substring(9, 10)) )
+                return false;
+            
+            sum = 0;
+            for (i = 1; i <= 10; i++) 
+                sum = sum + parseInt(strCPF.substring(i-1, i)) * (12 - i);
+            
+            rest = (sum * 10) % 11;
+            
+            if ((rest == 10) || (rest == 11))
+                rest = 0;
+            if (rest != parseInt(strCPF.substring(10, 11) ) )
+                return false;
+            
+            return true;
         }
 
         return false;
