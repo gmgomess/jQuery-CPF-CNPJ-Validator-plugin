@@ -1,7 +1,7 @@
 /*!
- * jQuery CPF/CNPJ Validator Plugin v1.1.0
+ * jQuery CPF/CNPJ Validator Plugin v1.1.1
  * Developed by: Guilherme Gomes (gmgomess@gmail.com)
- * Date: 2014-10-06
+ * Date: 2018-06-04
  */
 (function ($) {
     var type = null;
@@ -23,26 +23,25 @@
                 console.log("jQuery mask not found.");
             }
             else {
+                var ctrl = $(this);
                 if (settings.validate == 'cpf') {
-                    $(this).mask('000.000.000-00');
+                    ctrl.mask('000.000.000-00');
                 }
                 else if (settings.validate == 'cnpj') {
-                    $(this).mask('00.000.000/0000-00');
+                    ctrl.mask('00.000.000/0000-00');
                 }
                 else {
-                    var ctrl = $(this);
+                    var msk = '000.000.000-009';
                     var opt = {
                         onKeyPress: function (field) {
                             var masks = ['000.000.000-009', '00.000.000/0000-00'];
                             msk = (field.length > 14) ? masks[1] : masks[0];
-                            ctrl.mask(msk, this);
+                            ctrl.mask(msk, opt);
                         }
                     };
-
-                    $(this).mask('000.000.000-009', opt);
+                    ctrl.mask(msk, opt);
                 }
             }
-
         }
 
         return this.each(function () {
