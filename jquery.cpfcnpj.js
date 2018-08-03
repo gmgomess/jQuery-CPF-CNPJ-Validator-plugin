@@ -1,7 +1,7 @@
 /*!
- * jQuery CPF/CNPJ Validator Plugin v1.1.2
+ * jQuery CPF/CNPJ Validator Plugin v1.1.3
  * Developed by: Guilherme Gomes (gmgomess@gmail.com)
- * Date: 2018-06-04
+ * Date: 2018-08-02
  */
 (function ($) {
     var type = null;
@@ -13,6 +13,7 @@
             validate: 'cpfcnpj',
             event: 'focusout',
             handler: $(this),
+            validateOnlyFocus: false,
             ifValid: null,
             ifInvalid: null
         }, options);
@@ -49,52 +50,74 @@
             var control = $(this);
 
             $(document).on(settings.event, settings.handler,
-               function () {
-                   if (control.val().length == 14 || control.val().length == 18) {
-                       if (settings.validate == 'cpf') {
-                           valid = validate_cpf(control.val());
-                       }
-                       else if (settings.validate == 'cnpj') {
-                           valid = validate_cnpj(control.val())
-                       }
-                       else if (settings.validate == 'cpfcnpj') {
-                           if (validate_cpf(control.val())) {
-                               valid = true;
-                               type = 'cpf';
-                           }
-                           else if (validate_cnpj(control.val())) {
-                               valid = true;
-                               type = 'cnpj';
-                           }
-                           else valid = false;
-                       }
-                   }
-                   else valid = false;
+                function () {
+                    if (!settings.validateOnlyFocus || settings.validateOnlyFocus && control.is(':focus')) {
+                        var value = control.val();
+                        var lgt = value.length;
 
-                   if ($.isFunction(settings.ifValid)) {
-                       if (valid != null && valid) {
-                           if ($.isFunction(settings.ifValid)) {
-                               var callbacks = $.Callbacks();
-                               callbacks.add(settings.ifValid);
-                               callbacks.fire(control);
-                           }
-                       }
-                       else if ($.isFunction(settings.ifInvalid)) {
-                           settings.ifInvalid(control);
-                       }
-                   }
-               });
+                        valid = false;
+
+                        if (lgt == 11 || lgt == 14 || lgt == 18) {
+                            if (settings.validate == 'cpf') {
+                                valid = validate_cpf(value, settings.mask);
+                            }
+                            else if (settings.validate == 'cnpj') {
+                                valid = validate_cnpj(value, settings.mask)
+                            }
+                            else if (settings.validate == 'cpfcnpj') {
+                                if (validate_cpf(value, settings.mask)) {
+                                    valid = true;
+                                    type = 'cpf';
+                                }
+                                else if (validate_cnpj(value, settings.mask)) {
+                                    valid = true;
+                                    type = 'cnpj';
+                                }
+                            }
+                        }
+
+                        if ($.isFunction(settings.ifValid)) {
+                            if (valid != null && valid) {
+                                if ($.isFunction(settings.ifValid)) {
+                                    var callbacks = $.Callbacks();
+                                    callbacks.add(settings.ifValid);
+                                    callbacks.fire(control);
+                                }
+                            }
+                            else if ($.isFunction(settings.ifInvalid)) {
+                                settings.ifInvalid(control);
+                            }
+                        }
+                    }
+                });
         });
     }
 
-    function validate_cnpj(val) {
+    function validate_cnpj(val, msk) {
+        msk = msk != undefined && msk;
+        var regex = msk ? /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/ : /^[0-9]{14}$/;
+        var match = val.match(regex);
+        if (match != null) {
+            var val1 = "";
+            var val2 = "";
+            var val3 = "";
+            var val4 = "";
+            var val5 = "";
 
-        if (val.match(/^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/) != null) {
-            var val1 = val.substring(0, 2);
-            var val2 = val.substring(3, 6);
-            var val3 = val.substring(7, 10);
-            var val4 = val.substring(11, 15);
-            var val5 = val.substring(16, 18);
+            if (msk) {
+                val1 = match[0];
+                val2 = match[1]
+                val3 = match[2]
+                val4 = match[3];
+                val5 = match[4];
+            }
+            else {
+                val1 = val.substring(0, 2);
+                val2 = val.substring(2, 5);
+                val3 = val.substring(5, 8);
+                val4 = val.substring(8, 12);
+                val5 = val.substring(12, 14);
+            }
 
             var i;
             var number;
@@ -137,39 +160,41 @@
         return false;
     }
 
-    function validate_cpf(val) {
-        if (val.match(/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/) != null) {
+    function validate_cpf(val, msk) {
+        var regex = msk != undefined && msk ? /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/ : /^[0-9]{11}$/;
+
+        if (val.match(regex) != null) {
             //check all same numbers
             if (val.match(/\b(.+).*(\1.*){10,}\b/g) != null)
                 return false;
 
-            var strCPF = val.replace(/\D/g,'');
+            var strCPF = val.replace(/\D/g, '');
             var sum;
             var rest;
             sum = 0;
-            
-            for (i=1; i<=9; i++) 
-                sum = sum + parseInt(strCPF.substring(i-1, i)) * (11 - i);
-            
+
+            for (i = 1; i <= 9; i++)
+                sum = sum + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
+
             rest = (sum * 10) % 11;
-            
+
             if ((rest == 10) || (rest == 11))
                 rest = 0;
-            
-            if (rest != parseInt(strCPF.substring(9, 10)) )
+
+            if (rest != parseInt(strCPF.substring(9, 10)))
                 return false;
-            
+
             sum = 0;
-            for (i = 1; i <= 10; i++) 
-                sum = sum + parseInt(strCPF.substring(i-1, i)) * (12 - i);
-            
+            for (i = 1; i <= 10; i++)
+                sum = sum + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
+
             rest = (sum * 10) % 11;
-            
+
             if ((rest == 10) || (rest == 11))
                 rest = 0;
-            if (rest != parseInt(strCPF.substring(10, 11) ) )
+            if (rest != parseInt(strCPF.substring(10, 11)))
                 return false;
-            
+
             return true;
         }
 
