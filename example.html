@@ -13,6 +13,7 @@
     <input type="button" class="btn" value="Test" />
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="jquery.mask.js"></script>
     <script src="jquery.cpfcnpj.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -20,7 +21,7 @@
                 mask: false,
                 validate: 'cpfcnpj',
                 event: 'click',
-                // validateOnlyFocus: true,
+                //validateOnlyFocus: true,
                 handler: '.btn',
                 ifValid: function (input) { input.removeClass("error"); },
                 ifInvalid: function (input) { input.addClass("error"); }

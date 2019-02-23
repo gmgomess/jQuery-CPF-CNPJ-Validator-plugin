@@ -24,23 +24,27 @@
                 console.log("jQuery mask not found.");
             }
             else {
+                var masks = ['000.000.000-009', '00.000.000/0000-00'];
                 var ctrl = $(this);
                 if (settings.validate == 'cpf') {
-                    ctrl.mask('000.000.000-00');
+                    ctrl.mask(masks[0]);
                 }
                 else if (settings.validate == 'cnpj') {
-                    ctrl.mask('00.000.000/0000-00');
+                    ctrl.mask(masks[1]);
                 }
                 else {
-                    var msk = '000.000.000-009';
+                    var cpfCnpjMsk = function (val) {
+                        return val.length === 0 || val.length >= 12 ? masks[1] : masks[0];
+                    }
+
                     var opt = {
-                        onKeyPress: function (field) {
-                            var masks = ['000.000.000-009', '00.000.000/0000-00'];
-                            msk = (field.length > 14) ? masks[1] : masks[0];
-                            ctrl.mask(msk, opt);
+                        onChange: function (val, e, currentField) {
+                            var field = $(currentField);
+                            var value = field.cleanVal();
+                            field.mask(cpfCnpjMsk(value), opt);
                         }
                     };
-                    ctrl.mask(msk, opt);
+                    ctrl.mask(cpfCnpjMsk, opt);
                 }
             }
         }
@@ -94,70 +98,55 @@
     }
 
     function validate_cnpj(val, msk) {
-        msk = msk != undefined && msk;
-        var regex = msk ? /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/ : /^[0-9]{14}$/;
-        var match = val.match(regex);
-        if (match != null) {
-            var val1 = "";
-            var val2 = "";
-            var val3 = "";
-            var val4 = "";
-            var val5 = "";
+        val = val.replace(/[^\d]+/g, '');
 
-            if (msk) {
-                val1 = match[0];
-                val2 = match[1]
-                val3 = match[2]
-                val4 = match[3];
-                val5 = match[4];
-            }
-            else {
-                val1 = val.substring(0, 2);
-                val2 = val.substring(2, 5);
-                val3 = val.substring(5, 8);
-                val4 = val.substring(8, 12);
-                val5 = val.substring(12, 14);
-            }
+        if (val == '') return false;
 
-            var i;
-            var number;
-            var result = true;
+        if (val.length != 14)
+            return false;
 
-            number = (val1 + val2 + val3 + val4 + val5);
+        // Elimina CNPJs invalidos conhecidos
+        if (val == "00000000000000" ||
+            val == "11111111111111" ||
+            val == "22222222222222" ||
+            val == "33333333333333" ||
+            val == "44444444444444" ||
+            val == "55555555555555" ||
+            val == "66666666666666" ||
+            val == "77777777777777" ||
+            val == "88888888888888" ||
+            val == "99999999999999")
+            return false;
 
-            s = number;
-
-            c = s.substr(0, 12);
-            var dv = s.substr(12, 2);
-            var d1 = 0;
-
-            for (i = 0; i < 12; i++)
-                d1 += c.charAt(11 - i) * (2 + (i % 8));
-
-            if (d1 == 0)
-                result = false;
-
-            d1 = 11 - (d1 % 11);
-
-            if (d1 > 9) d1 = 0;
-
-            if (dv.charAt(0) != d1)
-                result = false;
-
-            d1 *= 2;
-            for (i = 0; i < 12; i++) {
-                d1 += c.charAt(11 - i) * (2 + ((i + 1) % 8));
-            }
-
-            d1 = 11 - (d1 % 11);
-            if (d1 > 9) d1 = 0;
-
-            if (dv.charAt(1) != d1)
-                result = false;
-
-            return result;
+        // Valida DVs
+        tamanho = val.length - 2
+        numeros = val.substring(0, tamanho);
+        digitos = val.substring(tamanho);
+        soma = 0;
+        pos = tamanho - 7;
+        for (i = tamanho; i >= 1; i--) {
+            soma += numeros.charAt(tamanho - i) * pos--;
+            if (pos < 2)
+                pos = 9;
         }
-        return false;
+        resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+        if (resultado != digitos.charAt(0))
+            return false;
+
+        tamanho = tamanho + 1;
+        numeros = val.substring(0, tamanho);
+        soma = 0;
+        pos = tamanho - 7;
+        for (i = tamanho; i >= 1; i--) {
+            soma += numeros.charAt(tamanho - i) * pos--;
+            if (pos < 2)
+                pos = 9;
+        }
+        resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+        if (resultado != digitos.charAt(1))
+            return false;
+
+        return true;
     }
 
     function validate_cpf(val, msk) {
