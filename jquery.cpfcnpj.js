@@ -1,11 +1,9 @@
 /*!
- * jQuery CPF/CNPJ Validator Plugin v1.1.3
+ * jQuery CPF/CNPJ Validator Plugin v1.1.4
  * Developed by: Guilherme Gomes (gmgomess@gmail.com)
- * Date: 2018-08-02
+ * Date: 2019-02-23 
  */
 (function ($) {
-    var type = null;
-
     $.fn.cpfcnpj = function (options) {
         // Default settings
         var settings = $.extend({
@@ -15,7 +13,8 @@
             handler: $(this),
             validateOnlyFocus: false,
             ifValid: null,
-            ifInvalid: null
+            ifInvalid: null,
+            returnType: null
         }, options);
 
         if (settings.mask) {
@@ -58,6 +57,7 @@
                     if (!settings.validateOnlyFocus || settings.validateOnlyFocus && control.is(':focus')) {
                         var value = control.val();
                         var lgt = value.length;
+                        returnType = null;
 
                         valid = false;
 
@@ -71,11 +71,11 @@
                             else if (settings.validate == 'cpfcnpj') {
                                 if (validate_cpf(value, settings.mask)) {
                                     valid = true;
-                                    type = 'cpf';
+                                    returnType = 'cpf';
                                 }
                                 else if (validate_cnpj(value, settings.mask)) {
                                     valid = true;
-                                    type = 'cnpj';
+                                    returnType = 'cnpj';
                                 }
                             }
                         }

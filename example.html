@@ -18,13 +18,13 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('.validate').cpfcnpj({
-                mask: false,
+                mask: true,
                 validate: 'cpfcnpj',
                 event: 'click',
                 //validateOnlyFocus: true,
                 handler: '.btn',
-                ifValid: function (input) { input.removeClass("error"); },
-                ifInvalid: function (input) { input.addClass("error"); }
+                ifValid: function (input) { input.removeClass("error"); alert(returnType); },
+                ifInvalid: function (input) { input.addClass("error"); alert(returnType); }
             });
         });
     </script>
