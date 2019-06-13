@@ -100,22 +100,8 @@
     function validate_cnpj(val, msk) {
         val = val.replace(/[^\d]+/g, '');
 
-        if (val == '') return false;
-
-        if (val.length != 14)
-            return false;
-
-        // Elimina CNPJs invalidos conhecidos
-        if (val == "00000000000000" ||
-            val == "11111111111111" ||
-            val == "22222222222222" ||
-            val == "33333333333333" ||
-            val == "44444444444444" ||
-            val == "55555555555555" ||
-            val == "66666666666666" ||
-            val == "77777777777777" ||
-            val == "88888888888888" ||
-            val == "99999999999999")
+        // Elimina CNPJs inválidos conhecidos
+        if (val == '' || val.length != 14 || /^(.)\1+$/.test(val))
             return false;
 
         // Valida DVs
